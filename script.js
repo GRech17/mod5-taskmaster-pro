@@ -45,21 +45,25 @@ var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
+
+
   // click task p
 $(".list-group").on("click","p", function() {
-  let textInput = $("<textarea>")
+  let text =$(this)
+  .text()
+  .trim();
+
+  let textInput = $("<textarea>").addClass('form-control').val(text)
   $(this).replaceWith(textInput)
   textInput.trigger("focus");
   // .addClass("form-control")
   // .val(text); 
 });
 
-
 $(".list-group").on("blur","textarea",function(){
   // get the textareas current value/text
   let text=$(this)
-    .val()
-    .trim();
+    .val();
   
     // get the paren ul's id attribute
   let status=$(this)
@@ -94,7 +98,7 @@ $(".list-group").on("click","span",function(){
    
   // create new input element
   let dateInput=$("<input>")
-  .attr("type","text")
+  .attr("type", "text")
   .addClass("form-control")
   .val(date);
   
@@ -110,12 +114,11 @@ $(".list-group").on("click","span",function(){
 $(".list-group").on("blur", "input[type='text']",function() {
   // get current text
   let date = $(this)
-    .val()
-    .trim();
+    .val();
     
   // get the parent ul's id attribute
   let status = $(this)
-    .closest(".list-group-item")
+    .closest(".list-group")
     .attr("id")
     .replace("list-","");
 
