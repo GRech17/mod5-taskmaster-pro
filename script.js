@@ -160,7 +160,7 @@ $("#task-form-modal .btn-primary").click(function() {
   var taskDate = $("#modalDueDate").val();
 
   if (taskText && taskDate) {
-    createTask(taskText, taskDate, "toDo");
+    createTask(taskText, taskDate, "toDo",);
 
     // close modal
     $("#task-form-modal").modal("hide");
@@ -170,6 +170,8 @@ $("#task-form-modal .btn-primary").click(function() {
       text: taskText,
       date: taskDate
     });
+
+    tasks.
 
     saveTasks();
   }
