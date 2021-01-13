@@ -13,9 +13,34 @@ var createTask = function(taskText, taskDate, taskList) {
   // append span and p element to parent li
   taskLi.append(taskSpan, taskP);
 
+  // check due date
+  auditTask(taskLi);
 
   // append to ul list on the page
   $("#list-" + taskList).append(taskLi);
+};
+
+
+let auditTask = function(taskEl) {
+  // get date from task element
+  let date = $(taskEl).find("span").text().trim();
+  // ensure it worked
+  console.log(date);
+
+  // convert to moment object at 5:00pm
+  let time = moment(date, "L").set("hour", 17);
+  
+  // remove any old classes from element
+  $(taskEl).removeClass("list-group-item-warning list-group-item-danger");
+
+  // apply new class if task is near/over due date
+  if (moment().isAfter(time)) {
+    $(taskEl).addClass("list-group-item-danger");
+  }
+  else if (Math.abs(moment().diff(time, "days")) <= 2) {
+    $(taskEl).addClass("list-group-item-warning");
+  }
+
 };
 
 var loadTasks = function() {
@@ -90,20 +115,24 @@ $(".card .list-group").sortable({
   },
 });  
 
-  // drop and delete function
-  $("#trash").droppable({
-      accept: ".card .list-group-item",
-      tolerance: "touch",
-      drop: function(event, ui) {
-        ui.draggable.remove();
-      },
-      over: function(event, ui) {
-        console.log(ui);
-      },
-      out: function(event, ui) {
-        console.log(ui);
-      }
-    });    
+// drop and delete function
+$("#trash").droppable({
+    accept: ".card .list-group-item",
+    tolerance: "touch",
+    drop: function(event, ui) {
+      ui.draggable.remove();
+    },
+    over: function(event, ui) {
+      console.log(ui);
+    },
+    out: function(event, ui) {
+      console.log(ui);
+    }
+  });
+  
+
+// calendar view for date picking  
+$("#modalDueDate").datepicker();    
 
 
 // modal was triggered
@@ -197,9 +226,19 @@ $(".list-group").on("click","span",function(){
   // swap out elements
   $(this).replaceWith(dateInput);
 
+  // enable jquery ui datepicker
+  dateInput.datepicker({
+    onClose: function(){
+      // when calendar is closed, force a "change" event on the `dateInput`
+      $(this).trigger("change");
+    }
+  });
+
   // automatically focus on new element
   dateInput.trigger("focus");
 });
+
+
 
 
   // value of due date was changed
@@ -229,7 +268,10 @@ $(".list-group").on("change", "input[type='text']",function() {
     .text(date);
 
   // replace input with span element
-  $(this).replaceWith(taskSpan);  
+  $(this).replaceWith(taskSpan);
+  
+  // pass tasks li element into auditTask to check new date
+  auditTask($(taskSpan).closest(".list-group-item"));
 });  
 
 
